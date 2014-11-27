@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>CS361 Grocery Ride Share Group - Getting Latitude and Longitude Coordinates</title>
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false&libraries=places" type="text/javascript"></script>
+<script src="https://www.google.com/jsapi?key=ABQIAAAAtHf2Vbojx_f9l2digk62nRR721nvlaDHrh7xkOtCxSM-c80RpRRMoUR4qEAqmJpECcqpdsdEs7YdIw" type="text/javascript"></script>
+<script language="Javascript" type="text/javascript">
+//Load libraries
+google.load("jquery", "1.6.2");
+google.load("jqueryui", "1.8.16");
+</script>
+<script src="http://gis.ats.ucla.edu/naid/js/infobubble.js" type="text/javascript"></script>
+<script src="js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+<script>
+$(function() {
+$( ".draggable" ).draggable();
+});
+</script>
+<script type="text/javascript">
+var map;
+var infobubblestyle = {
+shadowStyle: 1,
+padding: 5,
+backgroundColor: '#fff',
+borderRadius: 4,
+arrowSize: 10,
+borderWidth: 0,
+borderColor: '#fff',
+disableAutoPan: true,
+hideCloseButton: true,
+arrowPosition: 50,
+arrowStyle: 0,
+maxWidth: 200,
+minWidth: 100,
+minHeight: 20,
+maxHeight: 20
+};
+var infowindow = new google.maps.InfoWindow();
+function initialize()
+{
+var mapOptions =
+{
+center: new google.maps.LatLng(0,0),
+zoom: 2,
+mapTypeId: google.maps.MapTypeId.ROADMAP
+};
+map = new google.maps.Map(document.getElementById('map_canvas'),mapOptions);
+var input = document.getElementById('location');
+var autocomplete = new google.maps.places.Autocomplete(input);
+var marker = new google.maps.Marker({
+map: map
+});
+$('#zl').val(map.getZoom());
+dropMarker();
+google.maps.event.addListener(map, 'zoom_changed', function(e) {
+$('#zl').val(map.getZoom());
+});
+google.maps.event.addListener(autocomplete, 'place_changed', function() {
+google.maps.event.trigger(map, 'resize');
+infowindow.close();
+var place = autocomplete.getPlace();
+var lat = place.geometry.location.lat();
+var lng = place.geometry.location.lng();
+if (place.geometry.viewport)
+{
+map.fitBounds(place.geometry.viewport);
+}
+else
+{
+map.setCenter(place.geometry.location);
+map.setZoom(17); // Why 17? Because it looks good.
+//$('#coords').html(lat + ', ' + lng);
+updateCoordDisplay(lat,lng);
+}
+dropMarker();
+/*var image = new google.maps.MarkerImage(
+place.icon,
+new google.maps.Size(71, 71),
+new google.maps.Point(0, 0),
+new google.maps.Point(17, 34),
+new google.maps.Size(35, 35));
+marker.setIcon(image);
+marker.setPosition(place.geometry.location);*/
+var address = '';
+if (place.address_components)
+{
+address = [(place.address_components[0] &&
+place.address_components[0].short_name || ''),
+(place.address_components[1] &&
+place.address_components[1].short_name || ''),
+(place.address_components[2] &&
+place.address_components[2].short_name || '')
+].join(' ');
+jQuery('#latitude').val(place.geometry.location.lat());
+jQuery('#longitude').val(place.geometry.location.lng());
+//jQuery('#map_container').show();
+}
+infowindow.setContent('<div style="font-size:10px;"><strong>' + place.name + '</strong><br>' + address);
+//infowindow.open(map, marker);
+});
+}
+function updateCoordDisplay(lat,lng)
+{
+$('#zl').val(map.getZoom());
+$('#lat').val(lat);
+$('#lng').val(lng);
+$('#latlng').val(lat + ', ' + lng);
+$('#lnglat').val(lng + ', ' + lat);
+$('#latlngtab').val(lat + '	' + lng);
+$('#lnglattab').val(lng + '	' + lat);
+$('#map_canvas').css('height',$(window).height()-150);
+google.maps.event.trigger(map, "resize");
+}
+var marker;
+var infoBubble;
+function dropMarker()
+{
+if(infoBubble){infoBubble.close()};
+if(marker)
+{
+marker.setMap(null);
+}
+marker = new google.maps.Marker({
+position: map.getCenter(),
+map: map,
+draggable: true,
+animation: google.maps.Animation.DROP,
+title:"Hello World!"
+});
+var lat = map.getCenter().lat();
+var lng = map.getCenter().lng();
+//$('#coords').html(lat + ', ' + lng);
+updateCoordDisplay(lat,lng);
+//add info bubble
+infoBubble = new InfoBubble(infobubblestyle);
+infoBubble.setContent('hate typing? try me!');
+infoBubble.open(map,marker);
+google.maps.event.addListener(marker, 'mouseover', function() {
+infoBubble.close();
+});
+google.maps.event.addListener(marker, 'drag', function(e) {
+var lat = e.latLng.lat();
+var lng = e.latLng.lng();
+//$('#coords').html(lat + ', ' + lng);
+updateCoordDisplay(lat,lng);
+});
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+<style type="text/css">
+td {
+color:#ccc;
+font-size:10px;
+font-family:Verdana, Geneva, sans-serif;
+}
+input {
+font-size:14px;
+}
+body {
+background-color:#D9D9D9;
+font-family:Verdana, Geneva, sans-serif;
+}
+</style>
+</head>
+<body>
+<br>
+<h1 align="center"> Lattitude and Longitude Finder for Grocery Rideshares! </h1>
+<hr>
+<p> This page will display your lattitude and longitude coordinates. </p>
+<p>Click the button to get your coordinates.</p>
+<button onclick="getLocation()">Get Location</button>
+<button onclick="lookupAddress()">Reverse Lookup Address</button>
+<p id="demo"></p>
+<div style="width:100%; margin:auto;margin-top:20px;">
+<input type="text" id="location" style="width:600px;" placeholder="Enter your address:" />
+<table>
+<tr>
+<td><font color="000000">Zoom Level</font></td>
+<td><font color="000000">Latitude</td>
+<td><font color="000000">Longitude</td>
+</tr>
+<tr>
+<td><input class="span1" id="zl" type="text" value="zoom level" size="6"/></td>
+<td><input id="lat" type="text" value="latitude"/></td>
+<td><input id="lng" type="text" value="longitude" /></td>
+</tr>
+</table>
+<div id="map_canvas" style="width:60%;height:400px;"></div>
+<div>
+</div>
+</div>
+<br>
+<p> map from http://getlatlon.yohman.com/ Code reused from Kevin Stanton's web dev final project.</p>
+<script>
+var x = document.getElementById("demo");
+var lat = document.getElementById("lat");
+var lng = document.getElementById("lng");
+function getLocation() {
+if (navigator.geolocation) {
+navigator.geolocation.getCurrentPosition(showPosition);
+} else {
+x.innerHTML = "Geolocation is not supported by this browser.";
+}
+}
+function showPosition(position) {
+x.innerHTML = "Latitude: " + position.coords.latitude +
+"<br>Longitude: " + position.coords.longitude;
+lat.value = position.coords.latitude;
+lng.value = position.coords.longitude;
+}
+function lookupAddress() {
+$.ajax({
+url: "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + "40.714224"
++ "," + "-73.961452"+"&key=AIzaSyCMqwelZrM9ao2SkDJn-0ufJSociig71zs",
+dataType: 'application/json',
+complete: function(data){
+alert(data);
+// data1 = JSON.parse(data);
+// alert(data1.results[0]);
+}
+// ,
+// success: function(data){
+// // alert("Success!")
+// // console.log(data)
+// alert(data.items[0]);
+// }
+})
+}
+</script>
+</body>
+</html>
