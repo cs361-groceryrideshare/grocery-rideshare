@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Grocery Rideshare - Rideshare Search</title>
+    <link rel="stylesheet" href="search.css" />  
+  </head>
+  <body>
+      <div id="main_div">
+        <h1>Rideshare Search</h1>
+        <form id="rshare-search-frm" autocomplete="off">
+          <p>
+            <label for="destination">Destination: </label>
+            <input type="text" id="destination" name="destination" class="field-text" autofocus />
+          </p>
+          <p>
+            <label for="distance">Distance: </label>
+            <input type="text" id="distance" name="distance" class="field-text" />
+          </p>
+          <p>
+            <label for="owner">Owner: </label>
+            <input type="text" id="owner" name="owner" class="field-text" />
+          </p>
+          <p>
+            <label for="beg-date">Date: </label>
+              <input type="text" id="beg-date" name="beg_date" placeholder="Beginning date - DD/MM/YYYY" class="field-text" />
+          </p>
+          <p>
+            <label for="end-date"></label>
+              <input type="text" id="end-date" name="end_date" placeholder="End date - DD/MM/YYYY" class="field-text" />
+          </p>
+          <p>
+              <label for="locationX">Location X: </label>
+              <input id="locationX" type="text" name="locationX" class="field-text">
+          </p>
+          <p>
+              <label for="locationY">Location Y: </label>
+              <input id="locationY" type="text" name="locationY" class="field-text">
+          </p>                            
+          <p>
+            <input type="button" value="Search for a rideshare" onclick="return submitData()"/>
+          </p>
+        </form>
+        <div id="resultsDiv">
+        </div>
+    </div>
+    <script src="RideShareDB_JS.js"></script>
+    
+  </body>
+</html>
