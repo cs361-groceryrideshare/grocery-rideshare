@@ -13,10 +13,10 @@
         die('Connect Error(' . mysqli_connect_errno() . ') '. mysqli_connect_error());
     }
     
-    $distance = $_REQUEST['distance']; // distance in miles -> GPS    
-    $locationX = $_REQUEST['locationX']; // user location X GPS coord
-    $locationY = $_REQUEST['locationY']; // user locatoin Y GPS coord
-    $destination = $_REQUEST['destination']; // name
+//    $distance = $_REQUEST['distance']; // distance in miles -> GPS    
+//    $locationX = $_REQUEST['locationX']; // user location X GPS coord
+//    $locationY = $_REQUEST['locationY']; // user locatoin Y GPS coord
+//    $destination = $_REQUEST['destination']; // name
 
     //$locationX = 47.693928;
     //$locationY = -122.306676;    
@@ -28,20 +28,29 @@
         case 'insert':
             break;
         case 'query':           
-            $result = MakeQuery($mysqli);               
+            $result = MakeSearchQuery($mysqli);
+            echo json_encode(process_result($result));
+            mysqli_close($mysqli);            
             break;
-        case 'del_row':
+        case 'join_rideshare':
+            $result = MakeRideshareJoinQuery($mysqli);
+            echo $result;
+            //echo json_encode([ "placeholder" => "place_val"]);
+            mysqli_close($mysqli);            
             break;
         default:
             break;
     }
     
-    echo json_encode(process_result($result));
-    mysqli_close($mysqli);
+    //echo json_encode(process_result($result));
+    //mysqli_close($mysqli);
  
-    function MakeQuery($mysqli)
+    function MakeSearchQuery($mysqli)
     {
-        global $distance, $locationX, $locationY, $destination;
+        $distance = $_REQUEST['distance']; // distance in miles -> GPS    
+        $locationX = $_REQUEST['locationX']; // user location X GPS coord
+        $locationY = $_REQUEST['locationY']; // user locatoin Y GPS coord
+        $destination = $_REQUEST['destination']; // name
         
         $R = 6371;
         $p = PI() / 180;
@@ -89,16 +98,18 @@
             //$sub_q_destination = " AND RideDestination.dest_name = "."'".$destination."'"; 
         }      
         
-        $q_str = "SELECT RSE_RD.rideshare_ID, RSE_RD.ride_date, RDS.dest_name, RSU.user_first_name, RSU.user_last_name, RSE_RD.pickup_lat, RSE_RD.pickup_lng "
+        $q_str = "SELECT RSE_RD.rideshare_ID, RSE_RD.ride_date, RDS.dest_name, RSE_RD.UID, "
+        . "RSU.user_first_name, RSU.user_last_name, RSE_RD.capacity, RSE_RD.pickup_lat, RSE_RD.pickup_lng, RSE_RD.pickup_addr "
         ."FROM "
         ."("
-                ."SELECT RSE.rideshare_ID, RSE.DID, RSE.UID, RSE.pickup_lat, RSE.pickup_lng, RD.ride_date FROM "
+                ."SELECT RSE.rideshare_ID, RSE.capacity, RSE.DID, RSE.UID, RSE.pickup_lat, RSE.pickup_lng, RSE.pickup_addr, RD.ride_date FROM "
                 ."("
                         ."SELECT RideshareDate.RID, RideshareDate.ride_date FROM `RideshareDate`"                 
                 .") AS RD "
                 ."INNER JOIN "//."INNER JOIN `Rideshare` RSE ON RSE.rideshare_ID = RD.RID"
                 ."("
-                        ."SELECT Rideshare.rideshare_ID, Rideshare.DID, Rideshare.UID, Rideshare.pickup_lat, Rideshare.pickup_lng FROM `Rideshare` ".$sub_q_distance
+                        ."SELECT Rideshare.rideshare_ID, Rideshare.capacity, Rideshare.DID, Rideshare.UID, "
+                        . "Rideshare.pickup_lat, Rideshare.pickup_lng, Rideshare.pickup_addr FROM `Rideshare` ".$sub_q_distance
                 .") AS RSE ON RSE.rideshare_ID = RD.RID"
         .") AS RSE_RD "
         ."INNER JOIN "
@@ -114,22 +125,34 @@
         return $result;
     }
     
+    function MakeRideshareJoinQuery($mysqli)
+    {
+        $rideshare_ID = $_REQUEST['rideshare_ID'];    
+        $q_str = "UPDATE `Rideshare` SET Rideshare.capacity=(Rideshare.capacity - 1) WHERE Rideshare.capacity > 0 AND Rideshare.rideshare_ID = ".$rideshare_ID;
+        $result = $mysqli->query($q_str);
+        return $result;      
+    }
+    
     function process_result($result)
     {
         switch($_REQUEST['act'])
         {
-            case 'query':
-                global $locationX, $locationY;
+            case 'query':  
+                $locationX = $_REQUEST['locationX']; // user location X GPS coord
+                $locationY = $_REQUEST['locationY']; // user locatoin Y GPS coord
                 while($row = mysqli_fetch_array($result, MYSQLI_ASSOC))
                 {
                     $dist = getDistance($locationX, $locationY, $row['pickup_lat'], $row['pickup_lng']);
                     $dist = round($dist, 6, PHP_ROUND_HALF_UP);
-                    unset($row['pickup_lat']);
-                    unset($row['pickup_lng']);
+                    //unset($row['pickup_lat']);
+                    //unset($row['pickup_lng']);
                     $row['distance'] = $dist;
                     $jarr[] = $row;                
                 }
                 return $jarr; 
+            case 'join_rideshare':
+                $jarr[] = $result;
+                return $jarr;
             default:
                 break;
         }       
