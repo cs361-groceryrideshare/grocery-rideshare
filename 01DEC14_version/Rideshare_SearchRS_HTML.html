@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Grocery Rideshare - Rideshare Search</title>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+        <script src="RideShare_SearchRS_JS.js"></script>
+        <link rel="stylesheet" href="Rideshare_SearchRS_CSS.css" />
+    </head>
+        <body>
+            <div id="main_div">
+                <div>
+                    <a href="Rideshare_AddRS_HTML.html">Add Rideshare</a>
+                </div>
+                <h1>Rideshare Search</h1>
+                <table id="search_table">
+                    <tbody>
+                        <tr id="row1">
+                            <td>
+                                <label for="destination">Destination of Rideshare: </label>                                                    
+                            </td>
+                            <td>
+                                <input type="text" id="destination" name="destination" class="field-text" autofocus />  
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="distance">Distance From Current Location (km): </label>                                                          
+                            </td>
+                            <td>
+                                <input type="text" id="distance" name="distance" class="field-text" /> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="lat">Current Location Latitude: </label>                                                             
+                            </td>
+                            <td>
+                                <input id="lat" type="text" name="lat" class="field-text" value="47.693928" placeholder="47.693928" >
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="lng">Current Location Longitude: </label>
+                            </td>
+                            <td>
+                               <input id="lng" type="text" name="lng" class="field-text" value="-122.306676" placeholder="-122.306676">  
+                            </td>
+                        </tr>
+                        <!--<tr>
+                            <td>
+                                              
+                            </td>
+                            <td>
+                               
+                            </td>
+                        </tr>  -->                  
+                    </tbody>                
+                </table>                
+                <br>
+                <div data-role="fieldcontain">
+                    
+                    <button id="sb1" class="search_button" onclick="getLocation()">Set Current Location to Current GPS Location</button><br>            
+                    <button id="sb2" class="search_button" onclick="codeAddress()">Set Current Location to Address</button><br>
+                    <input id="addr" type="text" class="field-text" value="Portland, OR" >
+                    <br><br>
+                    <input type="button" id="submit_button" value="Search for Rideshares" onclick="return submitData()"/><br>
+                    <!--<button onclick="codeLatLng(document.getElementById('lat').value, document.getElementById('lng').value, 1)">Coordinates to Address</button>-->
+                </div>
+                <div id="msgDiv"></div>
+                <div id="resultsDiv"></div>
+                <div id="map-canvas">
+                                
+                </div>
+            </div>    
+
+        </body>
+</html>
