@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Grocery Rideshare - Rideshare Search</title>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+        <script src="RideShare_SearchRS_JS.js"></script>
+        <link rel="stylesheet" href="Rideshare_SearchRS_CSS.css" />
+    </head>
+        <body>
+            <div id="main_div">
+                <div>
+                    <a class ="top_links" href="Rideshare_AddAccount_HTML.html">Create Account</a>
+                    <a class ="top_links" href="Rideshare_AddRS_HTML.html">Create Rideshare</a>
+                </div>
+                <h1>Rideshare Search</h1>
+                <div>
+                    <div id="left_col">
+                        <table id="search_table">
+                            <tbody>
+                                <tr id="row1">
+                                    <td class="search_table_cells">
+                                        <label for="destination">Destination of Rideshare: </label>                                                    
+                                    </td>
+                                    <td class="search_table_cells">
+                                        <input type="text" id="destination" name="destination" class="field-text" autofocus />  
+                                    </td>
+                                </tr>
+                                <tr class="search_table_rows">
+                                    <td class="search_table_cells">
+                                        <label for="distance">Distance From Current Location (km): </label>                                                          
+                                    </td>
+                                    <td class="search_table_cells"> 
+                                        <input type="text" id="distance" name="distance" class="field-text" /> 
+                                    </td>
+                                </tr>
+                                <tr class="search_table_rows">
+                                    <td class="search_table_cells">
+                                        <label for="lat">Current Location Latitude: </label>                                                             
+                                    </td>
+                                    <td class="search_table_cells">
+                                        <input id="lat" type="text" name="lat" class="field-text" value="47.693928" placeholder="47.693928" >
+                                    </td>
+                                </tr>
+                                <tr class="search_table_rows">
+                                    <td class="search_table_cells">
+                                        <label for="lng">Current Location Longitude: </label>
+                                    </td>
+                                    <td class="search_table_cells">
+                                       <input id="lng" type="text" name="lng" class="field-text" value="-122.306676" placeholder="-122.306676">  
+                                    </td>
+                                </tr>
+                                <tr class="search_table_rows">
+                                    <td colspan="2" >
+                                        <button id="sb1" class="search_button wide_cells" onclick="getLocation()">Set Current Location to Current GPS Location</button> 
+                                    </td>
+                                </tr>
+                                <tr class="search_table_rows">
+                                    <td colspan="2" >
+                                        <button id="sb2" class="search_button wide_cells" onclick="codeAddress()">Set Current Location to Address</button>  
+                                    </td>
+                                </tr>
+                                <tr class="search_table_rows">
+                                    <td colspan="2"> 
+                                        <input id="addr" class="wide_cells" type="text" value="Portland, OR" > 
+                                    </td>
+                                </tr>
+                                <!--
+                                <tr>
+                                    <td colspan="2">
+                                        <p></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <input type="button" id="submit_button" class="wide_cells" value="Search for Rideshares" onclick="return submitData()"/>
+                                    </td>
+                                </tr>
+                                -->
+                            </tbody>                
+                        </table>
+                    </div>
+                    <div id="right_col">
+                        <div>
+                            <table id="join_button" onclick="joinRideshare(document.getElementById('join_button_msg'))">
+                                <tbody>
+                                    <tr>
+                                        <td id="join_button_msg">Join rideshare</td>
+                                    </tr>                            
+                                </tbody>
+                            </table>
+                        </div>
+                        <br>
+                        <div>
+                            <table id="search_button" onclick="return submitData()">
+                                <tbody>
+                                    <tr>
+                                        <td id="search_button_msg">Search for Rideshares</td>
+                                    </tr>                            
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div data-role="fieldcontain">
+                    
+                    <!--<button id="sb1" class="search_button" onclick="getLocation()">Set Current Location to Current GPS Location</button><br>            
+                    <button id="sb2" class="search_button" onclick="codeAddress()">Set Current Location to Address</button><br>
+                    <input id="addr" type="text" class="field-text" value="Portland, OR" >
+                    <br><br>
+                    <input type="button" id="submit_button" value="Search for Rideshares" onclick="return submitData()"/><br>-->
+                    <!--<button onclick="codeLatLng(document.getElementById('lat').value, document.getElementById('lng').value, 1)">Coordinates to Address</button>-->
+                </div>
+                <div id="msgDiv"></div>
+                <div id="resultsDiv"></div>
+                <div id="map-canvas">
+                                
+                </div>
+            </div>    
+
+        </body>
+</html>

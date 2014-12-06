@@ -1,0 +1,146 @@
+body
+{
+    margin-left: 5%;
+    margin-top: 2%;
+}
+
+td
+{
+    margin-bottom: 10px;
+}
+
+.field-text
+{
+    width: 100%;
+    text-align: center;
+    font-size: large;
+}
+
+.search_button
+{
+    margin-top: 10px;
+    font-size: large;
+}
+
+.wide_cells
+{
+    width: 100%;
+}
+
+.search_table_cells
+{
+    padding: 5px;
+    
+}
+
+.top_links
+{
+    margin-right: 25px;
+    font-size: large;
+}
+
+.resTbl:hover
+{
+    background: lightcyan !important;
+    cursor:pointer;
+    
+}
+
+.resTbl
+{
+    display: inline-table;
+    margin-right: 15px;
+    border: 1px solid black;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+}
+
+#msgDiv, #resultsDiv
+{
+    clear:both;  
+}
+
+#left_col
+{
+    float:left;
+    width:45%;   
+}
+
+#form_div
+{
+    border: 1px solid black;
+}
+
+#right_col
+{
+    width:50%;
+    float:right;
+}
+
+.tdiv
+{
+    margin-bottom: 25px;
+    
+}
+
+#join_button
+{
+    text-align: center;
+    height: 100px;
+    margin-top: 25px;
+    margin-left: 10%;
+    margin-bottom: 25px;
+    background:lightgreen;
+    border: 1px solid black;
+    width: 35%;
+    font-family: Arial, sans-serif;
+    font-size: large;
+    display: inline-table;
+}
+
+#join_button:hover, #search_button:hover
+{
+    cursor:pointer;
+}
+
+#search_button
+{
+    text-align: center;
+    height: 100px;
+    margin-left: 10%;
+    margin-bottom: 5%;
+    background:lightgreen;
+    border: 1px solid black;
+    width: 35%;
+    font-family: Arial, sans-serif;
+    font-size: large;
+    display: inline-table;
+}
+
+#search_table
+{
+    margin-left: 10%;
+    margin-top: 25px;
+
+    font-family: Arial, sans-serif;
+    font-size: large;
+}
+
+#submit_button
+{
+    margin-bottom: 10px;
+}
+
+#addr
+{
+    font-family: Arial, sans-serif;
+    font-size: large;
+    text-align: center;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    margin-top: 10px;
+}
+
+

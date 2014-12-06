@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Grocery Rideshare - Create Account</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="Rideshare_AddAccount_JS.js"></script>
+        <link rel="stylesheet" href="Rideshare_SearchRS_CSS.css" />
+    </head>
+    <body>
+        <div>
+            <div>
+                Logged in as:
+            </div>
+            <br>
+            <div>
+                <a class ="top_links" href="Rideshare_SearchRS_HTML.html">Rideshare Search</a>
+            </div>
+            <h1>Create Account</h1>
+            <table id='account_table'>
+                <tbody>
+                    <tr>
+                        <td>
+                            <label for="username">Username: </label>                                                    
+                        </td>                        
+                        <td>
+                            <input type="text" id="username" value="Testuser" class="field-text"/><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="pword">Password </label>                                                    
+                        </td>                        
+                        <td>
+                            <input type="password" id="pword" value="password" class="field-text"/><br>
+                        </td>
+                    </tr>                    
+                    <tr>
+                        <td>
+                            <label for="firstname">First Name: </label>                                                    
+                        </td>                        
+                        <td>
+                            <input type="text" id="firstname" value="Firstname" class="field-text"/><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="lastname">Last Name: </label>                                                    
+                        </td>                        
+                        <td>
+                            <input type="text" id="lastname" value="Lastname" class="field-text"/><br>
+                        </td>
+                    </tr>                     
+                    <tr>
+                        <td colspan="2">
+                            <input type="button" id="submit_button" value="Create Account" onclick="submitData()"/><br>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="msgDiv"></div>
+    </body>
+</html>
