@@ -23,19 +23,24 @@
     
     switch($act)
     {
-        case 'get_table':        
+        case 'addAccount':
+            $result = MakeAddAccountQuery($mysqli);
+            echo json_encode(array( "result" => "TESTING" ));          
+            mysqli_close($mysqli);             
             break;
-        case 'insert':
+        case 'addRideshare':
+            $result = MakeAddRideshareQuery($mysqli);
+            //echo $result;
+            mysqli_close($mysqli);              
             break;
-        case 'query':           
+        case 'searchRideshare':           
             $result = MakeSearchQuery($mysqli);
             echo json_encode(process_result($result));
             mysqli_close($mysqli);            
             break;
-        case 'join_rideshare':
+        case 'joinRideshare':
             $result = MakeRideshareJoinQuery($mysqli);
-            echo $result;
-            //echo json_encode([ "placeholder" => "place_val"]);
+            echo json_encode($result);          
             mysqli_close($mysqli);            
             break;
         default:
@@ -45,6 +50,112 @@
     //echo json_encode(process_result($result));
     //mysqli_close($mysqli);
  
+    function MakeAddAccountQuery($mysqli)
+    {
+        $username = $_REQUEST['username'];
+        $password = $_REQUEST['password'];
+        $firstname = $_REQUEST['firstname'];
+        $lastname = $_REQUEST['lastname'];
+ 
+//        $username = $_REQUEST['username'];
+//        $password = $_REQUEST['password'];
+//        $firstname = $_REQUEST['firstname'];
+//        $lastname = $_REQUEST['lastname'];        
+        
+        
+        $check_qstr = "SELECT user_ID FROM `RideshareUser` WHERE username = '".$username."'";
+        //echo $check_qstr;
+        $check_res = $mysqli->query($check_qstr);
+        //echo ' check res = '.$check_res;
+        if($check_res == TRUE)
+        {
+            if ($check_res->num_rows >= 1)
+            {
+                //echo 'ALREADY EXISTS ';
+                return array( "result" => "UNAME_EXISTS" );
+            }
+            //echo ' OK ';
+        }
+        
+        $insert_qstr = "INSERT INTO `RideshareUser` (`username`, `password`, `user_first_name`, `user_last_name`) ".
+                "VALUES( '".$username."', '".$password."', '".$firstname."', '".$lastname."')";
+        
+        $result = $mysqli->query($insert_qstr);
+
+        if($result == TRUE)
+        {            
+            $check_qstr2 = "SELECT user_ID, username FROM `RideshareUser` WHERE username = '".$username."'";
+            $check_res2 = $mysqli->query($check_qstr2);
+            $row = mysqli_fetch_array($check_res2, MYSQLI_ASSOC);
+            return array( "result" => "ADD_OK", "UID" => $row['user_ID'], 'UNAME' => $row['username']);
+            
+        }
+        else
+        {
+            //echo 'ADD FAIL';
+            return array( "result" => "ADD_FAIL" );
+        }    
+    }
+    
+    function MakeAddRideshareQuery($mysqli)
+    {
+        $ownerID = $_REQUEST['ownerID'];
+        $capacity = $_REQUEST['capacity'];
+        $pickup_locX = $_REQUEST['pickup_locX'];
+        $pickup_locY = $_REQUEST['pickup_locY'];
+        $pickup_addr = $_REQUEST['pickup_addr'];
+        $dest_locX = $_REQUEST['dest_locX'];
+        $dest_locY = $_REQUEST['dest_locY'];
+        $dest_name = $_REQUEST['dest_name'];
+        $dest_addr = $_REQUEST['dest_addr'];
+        $ridedate = $_REQUEST['ridedate'];       
+        
+        // make RideDestination
+        $dest_qstr = "INSERT INTO `RideDestination` (`GPS_lat`, `GPS_lng`, `dest_name`, `dest_addr`)"
+                ." VALUES (".$dest_locX.", ".$dest_locY.", '".$dest_name."', '".$dest_addr."')";     
+        $result = $mysqli->query($dest_qstr);
+        //echo $dest_qstr;
+        //echo ' ';
+         //make Rideshare
+        $dest_subqstr = "SELECT RD.destination_ID FROM `RideDestination` AS RD "
+                ."WHERE RD.dest_name = '".$dest_name."' "
+                ."AND RD.GPS_lat = ".$dest_locX." "
+                ."AND RD.GPS_lng = ".$dest_locY." ";
+        //echo $dest_subqstr;
+        //$result = $mysqli->query($dest_subqstr);
+        //$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+        //echo $row['destination_ID'];
+
+        $rs_qstr = "INSERT INTO `Rideshare` (`UID`, `capacity`, `max_capacity`, `DID`, `pickup_lat`, `pickup_lng`, `pickup_addr`)"
+            ." VALUES (".$ownerID.", "
+            .$capacity.", "
+            .$capacity.", "
+            ."(".$dest_subqstr."), "
+            .$pickup_locX.", "
+            .$pickup_locY.", "
+            ."'".$pickup_addr."')";
+        //echo $rs_qstr;
+        $result = $mysqli->query($rs_qstr);
+            
+        // make Ridedate
+        $re_subqstr = "SELECT Rideshare.rideshare_ID FROM `Rideshare` "
+                ."WHERE UID = ".$ownerID." "
+                ."AND capacity = ".$capacity." "
+                ."AND DID = (".$dest_subqstr.") "
+                ."AND pickup_lat = ".$pickup_locX." "
+                ."AND pickup_lng = ".$pickup_locY." ";
+        //echo $re_subqstr;        
+        //$result = $mysqli->query($re_subqstr);
+        //$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+        //echo $row['rideshare_ID'];
+                
+        $rd_sqtr = "INSERT INTO `RideshareDate` (`RID`, `ride_date`) "
+            ."VALUES ( (".$re_subqstr."), '".$ridedate."')";
+        //echo $rd_sqtr;
+        
+        $result = $mysqli->query($rd_sqtr);  
+    }
+    
     function MakeSearchQuery($mysqli)
     {
         $distance = $_REQUEST['distance']; // distance in miles -> GPS    
@@ -137,7 +248,10 @@
     {
         switch($_REQUEST['act'])
         {
-            case 'query':  
+            case 'addRideshare':
+                $jarr[] = $result;
+                return $jarr;            
+            case 'searchRideshare':  
                 $locationX = $_REQUEST['locationX']; // user location X GPS coord
                 $locationY = $_REQUEST['locationY']; // user locatoin Y GPS coord
                 while($row = mysqli_fetch_array($result, MYSQLI_ASSOC))
@@ -147,10 +261,10 @@
                     //unset($row['pickup_lat']);
                     //unset($row['pickup_lng']);
                     $row['distance'] = $dist;
-                    $jarr[] = $row;                
+                    $jarr[] = $row;
                 }
                 return $jarr; 
-            case 'join_rideshare':
+            case 'joinRideshare':
                 $jarr[] = $result;
                 return $jarr;
             default:
