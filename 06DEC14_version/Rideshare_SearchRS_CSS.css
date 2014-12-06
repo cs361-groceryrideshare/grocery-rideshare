@@ -98,11 +98,6 @@ td
     display: inline-table;
 }
 
-#join_button:hover, #search_button:hover
-{
-    cursor:pointer;
-}
-
 #search_button
 {
     text-align: center;
@@ -115,6 +110,12 @@ td
     font-family: Arial, sans-serif;
     font-size: large;
     display: inline-table;
+}
+
+#join_button:hover, #search_button:hover
+{
+    cursor:pointer;
+    background:palegoldenrod;
 }
 
 #search_table
