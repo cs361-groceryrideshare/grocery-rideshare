@@ -36,7 +36,7 @@
             break;
         case 'addRideshare':
             $result = MakeAddRideshareQuery($mysqli);
-            //echo $result;
+            echo json_encode($result); 
             mysqli_close($mysqli);              
             break;
         case 'searchRideshare':           
@@ -143,23 +143,56 @@
         $dest_name = $_REQUEST['dest_name'];
         $dest_addr = $_REQUEST['dest_addr'];
         $ridedate = $_REQUEST['ridedate'];       
-        
-        // make RideDestination
-        $dest_qstr = "INSERT INTO `RideDestination` (`GPS_lat`, `GPS_lng`, `dest_name`, `dest_addr`)"
-                ." VALUES (".$dest_locX.", ".$dest_locY.", '".$dest_name."', '".$dest_addr."')";     
-        $result = $mysqli->query($dest_qstr);
-        //echo $dest_qstr;
-        //echo ' ';
-         //make Rideshare
+
+        // query string for checking if destination already exists
         $dest_subqstr = "SELECT RD.destination_ID FROM `RideDestination` AS RD "
                 ."WHERE RD.dest_name = '".$dest_name."' "
                 ."AND RD.GPS_lat = ".$dest_locX." "
                 ."AND RD.GPS_lng = ".$dest_locY." ";
-        //echo $dest_subqstr;
-        //$result = $mysqli->query($dest_subqstr);
-        //$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-        //echo $row['destination_ID'];
+        $result1 = $mysqli->query($dest_subqstr);
+        
+        if($result1 == TRUE)
+        {
+            if ($result1->num_rows == 0)
+            {
+                // make RideDestination
+                $dest_qstr = "INSERT INTO `RideDestination` (`GPS_lat`, `GPS_lng`, `dest_name`, `dest_addr`)"
+                        ." VALUES (".$dest_locX.", ".$dest_locY.", '".$dest_name."', '".$dest_addr."')";     
+                $result1 = $mysqli->query($dest_qstr);
 
+                if($result1 == FALSE)
+                {            
+                    return array( "result" => "ADD_ERROR_DEST_INSERT" );             
+                }   
+            }            
+        }
+        else
+        {
+            return array( "result" => "ADD_ERROR_DEST_SELECT" ); 
+        }        
+
+        // query string for checking if rideshare already exists
+        $re_subqstr = "SELECT Rideshare.rideshare_ID FROM `Rideshare` "
+                ."WHERE UID = ".$ownerID." "
+                ."AND capacity = ".$capacity." "
+                ."AND DID = (".$dest_subqstr.") "
+                ."AND pickup_lat = ".$pickup_locX." "
+                ."AND pickup_lng = ".$pickup_locY." ";        
+        $result2 = $mysqli->query($re_subqstr);
+        
+        if($result2 == TRUE)
+        {
+            if ($result2->num_rows >= 1)
+            {
+                return array( "result" => "RS_EXISTS" );   
+            }            
+        }
+        else
+        {
+            return array( "result" => "ADD_ERROR_RS_CHECK" ); 
+        }
+        
+        // make Rideshare
         $rs_qstr = "INSERT INTO `Rideshare` (`UID`, `capacity`, `max_capacity`, `DID`, `pickup_lat`, `pickup_lng`, `pickup_addr`)"
             ." VALUES (".$ownerID.", "
             .$capacity.", "
@@ -168,26 +201,25 @@
             .$pickup_locX.", "
             .$pickup_locY.", "
             ."'".$pickup_addr."')";
-        //echo $rs_qstr;
-        $result = $mysqli->query($rs_qstr);
-            
-        // make Ridedate
-        $re_subqstr = "SELECT Rideshare.rideshare_ID FROM `Rideshare` "
-                ."WHERE UID = ".$ownerID." "
-                ."AND capacity = ".$capacity." "
-                ."AND DID = (".$dest_subqstr.") "
-                ."AND pickup_lat = ".$pickup_locX." "
-                ."AND pickup_lng = ".$pickup_locY." ";
-        //echo $re_subqstr;        
-        //$result = $mysqli->query($re_subqstr);
-        //$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-        //echo $row['rideshare_ID'];
-                
-        $rd_sqtr = "INSERT INTO `RideshareDate` (`RID`, `ride_date`) "
-            ."VALUES ( (".$re_subqstr."), '".$ridedate."')";
-        //echo $rd_sqtr;
+        $result3 = $mysqli->query($rs_qstr);
         
-        $result = $mysqli->query($rd_sqtr);  
+        if($result3 == FALSE)
+        {            
+            return array( "result" => "ADD_ERROR_RS_INSERT" );             
+        }    
+             
+        // make Ridedate
+        $rd_sqtr = "INSERT INTO `RideshareDate` (`RID`, `ride_date`) "
+            ."VALUES ( (".$re_subqstr."), '".$ridedate."')";     
+        $result4 = $mysqli->query($rd_sqtr);
+        
+        
+        if($result4 == FALSE)
+        {            
+            return array( "result" => "ADD_ERROR_DATE_INSERT" );             
+        }
+        
+        return array( "result" => "OK" ); 
     }
     
     function MakeSearchQuery($mysqli)
@@ -317,7 +349,16 @@
         switch($_REQUEST['act'])
         {
             case 'addRideshare':
-                $jarr[] = $result;
+                if($result == FALSE)
+                {
+                    $arr[] = array( "result" => "FAIL" );
+                    return $arr;                    
+                }
+                else
+                {
+                    $arr[] = array( "result" => "OK" );
+                    return $arr;                      
+                }
                 return $jarr;            
             case 'searchRideshare':  
                 $locationX = $_REQUEST['locationX']; // user location X GPS coord

@@ -87,10 +87,11 @@ function makeAccountResult(resObj, argObj)
             document.getElementById('pword').value = '';
             break;
         case 'ADD_OK':
-            mdiv.innerHTML = 'Account creation successful!';
+            mdiv.innerHTML = 'Account creation successful! Returning to login...';
             acctObj['UID'] = resObj['UID'];
-            acctObj['UNAME'] = resObj['UNAME'];                    
-            clearFields();
+            acctObj['UNAME'] = resObj['UNAME'];
+            var delay=2000;
+            setTimeout(function(){window.location.href = 'Rideshare_Mainpage_HTML.html';}, delay);         
             break;
         case 'ADD_FAIL':
             mdiv.innerHTML = 'Error: account creation failed';

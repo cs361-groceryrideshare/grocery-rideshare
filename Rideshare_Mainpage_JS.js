@@ -18,7 +18,7 @@ function logResultFunc(repObj, argObj)
     switch(result)
     {
         case 'OK':
-            msgTD.innerHTML = 'LOGIN OK';
+            msgTD.innerHTML = 'login successful';
             sessionStorage.UID = repObj['UID'];
             sessionStorage.uname = repObj['uname'];
             window.location.href = 'Rideshare_SearchRS_HTML.html';
@@ -26,7 +26,7 @@ function logResultFunc(repObj, argObj)
             //alert(sessionStorage.uname);
             break;
         case 'LOGIN_FAIL':
-            msgTD.innerHTML = 'LOGIN FAIL';
+            msgTD.innerHTML = 'Username/password does not exist';
             break;
         case 'ERROR':
             msgTD.innerHTML = 'LOGIN ERROR';

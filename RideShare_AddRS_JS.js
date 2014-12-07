@@ -69,12 +69,14 @@ function logOut()
 
 function makeRideshare()
 {
-    var ownerID = 2;
+    var ownerID = sessionStorage.UID;
     var p_addr = document.getElementById('pick_addr').value;
     var d_addr = document.getElementById('dest_addr').value;
     var d_name = document.getElementById('dest_name').value;
     var r_cap = document.getElementById('capacity').value;
     var r_date = document.getElementById('date').value;
+    var r_time = document.getElementById('time').value;
+    var r_date_time = r_date+' '+r_time;
 
     var p_locX = parseFloat(pickupX).toFixed(6);
     var p_locY = parseFloat(pickupY).toFixed(6);  
@@ -92,23 +94,39 @@ function makeRideshare()
             +"&dest_locY="+d_locY
             +"&dest_name="+d_name+""
             +"&dest_addr="+d_addr+""
-            +"&ridedate="+r_date+"";
+            +"&ridedate="+r_date_time+"";
     
     //alert(q_str);
     connectDatabase(q_str, postMakeFunc, { distance: 1, pickup: 1, destination: 1, date_start: 1, date_end: 1});    
 }
 
-function postMakeFunc()
+function postMakeFunc(resObj, argObj)
 {
     var msg_div = document.getElementById("msgTblText");
-    msg_div.innerHTML = 'Rideshare created!';
-    
+    alert(resObj['result']);
+    switch(resObj['result'])
+    {
+        case 'ADD_ERROR':
+        case 'ADD_ERROR_DEST_INSERT':
+        case 'ADD_ERROR_DEST_SELECT':
+        case 'ADD_ERROR_RS_CHECK': 
+        case 'ADD_ERROR_RS_INSERT':
+        case 'ADD_ERROR_DATE_INSERT':
+            msg_div.innerHTML = 'Error: rideshare creation failed';
+            break;
+        case 'RS_EXISTS':
+            msg_div.innerHTML = 'Rideshare already exists';
+            break;             
+        case 'OK': 
+            msg_div.innerHTML = 'Rideshare created!';
+            break;       
+    }    
     document.getElementById('pick_addr').value = "";
     document.getElementById('dest_addr').value = "";
     document.getElementById('dest_name').value = "";
     document.getElementById('capacity').value = "";
     document.getElementById('date').value = "";    
-    
+    document.getElementById('time').value = ""; 
     
     //alert('rideshare created!');
 }
@@ -149,9 +167,8 @@ function connectDatabase(url, func, funcArgs)
             if(httpReq.status === 200)
             {
                 // Uncomment the line below to alert the results returned
-                //alert(httpReq.responseText);
-                //func(JSON.parse(httpReq.responseText), funcArgs);
-                func();
+                alert(httpReq.responseText);
+                func(JSON.parse(httpReq.responseText), funcArgs);
             }
             else
             {
