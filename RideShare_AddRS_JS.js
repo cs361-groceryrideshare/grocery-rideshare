@@ -41,6 +41,9 @@ function load_logname()
             log_link.setAttribute('href', 'Rideshare_Mainpage_HTML.html');
             log_link.innerHTML = 'LOG IN';
             log_tbl_td1.appendChild(log_link);
+            document.getElementById('msgTblText').innerHTML = 'Not logged in, redirecting to main page...';
+            var delay=2000;
+            setTimeout(function(){window.location.href = 'Rideshare_Mainpage_HTML.html';}, delay);            
         }
         else
         {
@@ -56,6 +59,9 @@ function load_logname()
         log_link.setAttribute('href', 'Rideshare_Mainpage_HTML.html');
         log_link.innerHTML = 'LOG IN';
         log_tbl_td1.appendChild(log_link);
+        document.getElementById('msgTblText').innerHTML = 'Not logged in, redirecting to main page...';
+        var delay=2000;
+        setTimeout(function(){window.location.href = 'Rideshare_Mainpage_HTML.html';}, delay);     
     }      
     log_div.appendChild(log_tbl);
 }
