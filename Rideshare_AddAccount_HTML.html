@@ -14,56 +14,78 @@ and open the template in the editor.
     </head>
     <body>
         <div>
-            <div>
-                Logged in as:
+            <div id='logdiv'>
+                <table id="logTbl">
+                    <tbody>
+                        <tr>
+                            <td id="logTD1">                       
+                            </td>
+                            <td id="logTD2">                       
+                            </td>                       
+                        </tr>
+                    </tbody>
+                </table>
+            </div>          
+            <div id="left_col">
+                <div id="top_link_div">
+                    <a class ="top_links" href="Rideshare_Mainpage_HTML.html">Rideshare Home</a>
+                    <!--<a class ="top_links" href="Rideshare_AddRS_HTML.html">Create Rideshare</a>-->
+                </div>                
+                <h1>Create Account</h1>
+                <div id="form_div">
+                    <table id='account_table'>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <label for="username">Username: </label>                                                    
+                                </td>                        
+                                <td>
+                                    <input type="text" id="username" value="Testuser" class="acct_make_text"/><br>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="pword">Password </label>                                                    
+                                </td>                        
+                                <td>
+                                    <input type="password" id="pword" value="password" class="acct_make_text"/><br>
+                                </td>
+                            </tr>                    
+                            <tr>
+                                <td>
+                                    <label for="firstname">First Name: </label>                                                    
+                                </td>                        
+                                <td>
+                                    <input type="text" id="firstname" value="Firstname" class="acct_make_text"/><br>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="lastname">Last Name: </label>                                                    
+                                </td>                        
+                                <td>
+                                    <input type="text" id="lastname" value="Lastname" class="acct_make_text"/><br>
+                                </td>
+                            </tr>                     
+                            <tr>
+                                <td colspan="2">
+                                    <input type="button" id="makeAccountButton" value="Create Account" onclick="submitData()"/><br>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+                <div id="msgDiv">
+                    <table id="msgTbl">
+                        <tbody>
+                            <tr>
+                                <td id="msgTblText"></td>                                       
+                            </tr>                            
+                        </tbody>
+                    </table>                                       
+                </div>                 
             </div>
-            <br>
-            <div>
-                <a class ="top_links" href="Rideshare_SearchRS_HTML.html">Rideshare Search</a>
-            </div>
-            <h1>Create Account</h1>
-            <table id='account_table'>
-                <tbody>
-                    <tr>
-                        <td>
-                            <label for="username">Username: </label>                                                    
-                        </td>                        
-                        <td>
-                            <input type="text" id="username" value="Testuser" class="field-text"/><br>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label for="pword">Password </label>                                                    
-                        </td>                        
-                        <td>
-                            <input type="password" id="pword" value="password" class="field-text"/><br>
-                        </td>
-                    </tr>                    
-                    <tr>
-                        <td>
-                            <label for="firstname">First Name: </label>                                                    
-                        </td>                        
-                        <td>
-                            <input type="text" id="firstname" value="Firstname" class="field-text"/><br>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label for="lastname">Last Name: </label>                                                    
-                        </td>                        
-                        <td>
-                            <input type="text" id="lastname" value="Lastname" class="field-text"/><br>
-                        </td>
-                    </tr>                     
-                    <tr>
-                        <td colspan="2">
-                            <input type="button" id="submit_button" value="Create Account" onclick="submitData()"/><br>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
-        <div id="msgDiv"></div>
     </body>
 </html>

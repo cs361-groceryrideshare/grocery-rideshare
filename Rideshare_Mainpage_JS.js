@@ -1,5 +1,38 @@
 window.onload = function(){ load_logname();};
-var acctObj = { 'UID': -1, 'UNAME': 'none' };
+
+function login()
+{
+    var uname = document.getElementById("uname").value;
+    var pw = document.getElementById("pw").value;
+    
+    var q_str= 'Rideshare_DB.php?act=login&uname='+uname+'&pw='+pw;
+    //alert(q_str);
+    connectDatabase(q_str, logResultFunc, { 'blank': 'blank' } );
+}
+
+function logResultFunc(repObj, argObj)
+{
+    var result = repObj['result'];
+    var msgTD = document.getElementById('msgTblText');
+    
+    switch(result)
+    {
+        case 'OK':
+            msgTD.innerHTML = 'LOGIN OK';
+            sessionStorage.UID = repObj['UID'];
+            sessionStorage.uname = repObj['uname'];
+            window.location.href = 'Rideshare_SearchRS_HTML.html';
+            //alert(sessionStorage.UID);
+            //alert(sessionStorage.uname);
+            break;
+        case 'LOGIN_FAIL':
+            msgTD.innerHTML = 'LOGIN FAIL';
+            break;
+        case 'ERROR':
+            msgTD.innerHTML = 'LOGIN ERROR';
+            break;
+    }
+}
 
 function load_logname()
 {  
@@ -63,50 +96,6 @@ function logOut()
     return true;
 }
 
-function submitData()
-{
-    var uname = document.getElementById('username').value;
-    var pword = document.getElementById('pword').value;
-    var fname = document.getElementById('firstname').value;
-    var lname = document.getElementById('lastname').value;
-  
-    var q_str = "Rideshare_DB.php?act=addAccount&username="+uname+"&password="+pword+"&firstname="+fname+"&lastname="+lname;
-    //alert(q_str);
-    connectDatabase(q_str, makeAccountResult, { distance: 1, pickup: 1, destination: 1, date_start: 1, date_end: 1});    
-}
-
-function makeAccountResult(resObj, argObj)
-{      
-    var mdiv = document.getElementById('msgTblText');
-    //alert(resObj['result']);
-    switch(resObj['result'])
-    {
-        case 'UNAME_EXISTS':
-            mdiv.innerHTML = 'Username exists! Please reenter username';
-            document.getElementById('username').value = '';
-            document.getElementById('pword').value = '';
-            break;
-        case 'ADD_OK':
-            mdiv.innerHTML = 'Account creation successful!';
-            acctObj['UID'] = resObj['UID'];
-            acctObj['UNAME'] = resObj['UNAME'];                    
-            clearFields();
-            break;
-        case 'ADD_FAIL':
-            mdiv.innerHTML = 'Error: account creation failed';
-            clearFields();
-            break;
-    }   
-}
-
-function clearFields()
-{
-    document.getElementById('username').value = '';
-    document.getElementById('pword').value = '';
-    document.getElementById('firstname').value = '';
-    document.getElementById('lastname').value = '';    
-}
-
 function connectDatabase(url, func, funcArgs)
 {
     var httpReq;
@@ -145,7 +134,6 @@ function connectDatabase(url, func, funcArgs)
                 // Uncomment the line below to alert the results returned
                 //alert(httpReq.responseText);
                 func(JSON.parse(httpReq.responseText), funcArgs);
-                //func();
             }
             else
             {
@@ -154,5 +142,3 @@ function connectDatabase(url, func, funcArgs)
         }
     }
 }
-
-

@@ -3,7 +3,7 @@
 * To change this template file, choose Tools | Templates
 * and open the template in the editor.
 */
-window.onload = setCSS();
+window.onload = function(){ load_logname();};
 
 prevTbl = 'none';
 curTbl = 'none';
@@ -13,6 +13,68 @@ function setCSS()
 //    document.getElementById('sb1').style.width = document.getElementById('row1').width + 'px';
 //    document.getElementById('sb2').style.width = document.getElementById('row1').style.width;// + 'px';
 //    document.getElementById('addr').style.width = document.getElementById('row1').style.width;// + 'px';
+}
+
+function load_logname()
+{  
+    var log_div = document.getElementById("logdiv");
+    var log_tbl = document.getElementById('logTbl');
+    if(log_tbl)
+    {
+        log_div.removeChild(log_tbl);
+    }
+    
+    log_tbl = document.createElement(('table'));
+    
+    var log_tbl_bdy = document.createElement('tbody');
+    var log_tbl_row = document.createElement('tr');
+    var log_tbl_td1 = document.createElement('td');   
+    var log_tbl_td2 = document.createElement('td');
+    
+    var log_link = document.createElement('a');
+    log_link.setAttribute('id', 'log_link');
+    
+    log_tbl.setAttribute('id', 'logTbl');
+    
+    log_tbl_td1.setAttribute('id', 'logTD1');
+    log_tbl_td2.setAttribute('id', 'logTD2');
+    
+    log_tbl_row.appendChild(log_tbl_td1);
+    log_tbl_row.appendChild(log_tbl_td2);
+    log_tbl_bdy.appendChild(log_tbl_row);
+    log_tbl.appendChild(log_tbl_bdy);
+    
+    if(sessionStorage.uname)
+    {
+        if(sessionStorage.uname === 'none')
+        {
+            log_link.setAttribute('href', 'Rideshare_Mainpage_HTML.html');
+            log_link.innerHTML = 'LOG IN';
+            log_tbl_td1.appendChild(log_link);
+        }
+        else
+        {
+            log_link.setAttribute('href', 'Rideshare_Mainpage_HTML.html');
+            log_link.onclick = function(){ logOut(); };
+            log_link.innerHTML = 'LOG OUT';
+            log_tbl_td1.appendChild(log_link);
+            log_tbl_td2.innerHTML = "Logged in as: "+sessionStorage.uname;
+        }
+    }
+    else
+    {       
+        log_link.setAttribute('href', 'Rideshare_Mainpage_HTML.html');
+        log_link.innerHTML = 'LOG IN';
+        log_tbl_td1.appendChild(log_link);
+    }     
+    log_div.appendChild(log_tbl);
+}
+
+function logOut()
+{
+    sessionStorage.uname = 'none';
+    sessionStorage.UID = -1;
+    return true;
 }
 
 function submitData()
@@ -48,22 +110,41 @@ function joinRideshare(elm)
     
     var rid = curTbl.getAttribute("data-rideshareID");
     //alert("joining rideshare: "+rid);
-    var q_str= 'Rideshare_DB.php?act=joinRideshare&rideshare_ID='+rid;
+    var q_str= 'Rideshare_DB.php?act=joinRideshare&rideshare_ID='+rid+'&user_ID=2';
     //alert(q_str);
     connectDatabase(q_str, updateCapacity, { rideshare_ID: rid});
+}
+
+function updateCapacity(response, args)
+{
+    if(response['result'] === 'IS_MEMBER')
+    {
+        document.getElementById("msgTblText").innerHTML = 'Already a member of this rideshare';
+    }
+    else if(response['result'] === 'JOIN_OK')
+    {
+        var cur_cap_node = curTbl.childNodes[0].childNodes[4].childNodes[1];
+        cur_cap_node.innerHTML = cur_cap_node.innerHTML - 1;
+        document.getElementById("msgTblText").innerHTML = 'Joined Rideshare';
+    }
+    else if(response['result'] === 'JOIN_ERROR')
+    {
+        document.getElementById("msgTblText").innerHTML = 'An error occured during joining the rideshare';
+    }
+    else
+    {
+        document.getElementById("msgTblText").innerHTML = 'Unknown state';
+    }
     
-    //var capElm = table.getElementsByClassName("d_cap").innerHTML = "FAIL";
-    curTbl.getElementsByClassName("d_cap").innerHTML = "FAIL";
     curTbl.style.background = "white";
     curTbl = 'none';
-    //capElm.innerHTML =  "FAIL";
-    
-    elm.innerHTML = "Joined!";
-    elm.onclick = function(){};
+
+    setButton(document.getElementById("join_button"), 'setOFF');
 }
 
 function showResults(response, args)
 {
+    var msgTblText = document.getElementById("msgTblText");
     // Get the div that will contain the results
     var resultsParent = document.getElementById("resultsDiv");
     // If div containing results exists, delete it
@@ -72,6 +153,33 @@ function showResults(response, args)
         var resultsNode = document.getElementById("results");
         resultsNode.parentNode.removeChild(resultsNode);
     }
+    
+    for(var i = 0; i < response.length; i++)
+    {
+        if(response[i]['result'] === 'FAIL')
+        {
+            msgTblText.innerHTML = 'An error occured with the search query';
+            return;
+        }
+        else if(response[i]['result'] === 'NONE')
+        {
+            msgTblText.innerHTML = 'No results found';
+            return;
+        }
+        else if(response[i]['result'] === 'OK')
+        {
+            msgTblText.innerHTML = 'Click on rideshare to select';
+            break;
+        }
+        else
+        {
+            msgTblText.innerHTML = 'Unknown state';
+            return;
+        }    
+    }    
+    //alert(response);
+    //alert(response['result']);
+    
     // Create a div for new results, set id to "results", and append to resultsDiv
     var newDiv = document.createElement("div");
     newDiv.className = "result-display";
@@ -80,52 +188,44 @@ function showResults(response, args)
     
     var tcounter = 0;
     var tmax = 2;
-    var tdiv_idx = 0;
+    //var tdiv_idx = 0;
     // Display results
-    var tdivs = [ document.createElement("div") ];
-    tdivs[tdiv_idx].setAttribute("class", "tdiv");
+    //var tdivs = [ document.createElement("div") ];
+    //tdivs[tdiv_idx].setAttribute("class", "tdiv");
+    
+    var rTbls = document.createElement("table");
+    var rTbls_bdy = document.createElement('tbody');
+    var rTbls_row = document.createElement('tr');
+    rTbls.appendChild(rTbls_bdy);
+    rTbls_bdy.appendChild(rTbls_row);
     for(var i = 0; i < response.length; i++)
     {
         if(response[i]["capacity"] === "0")
             continue;
-        
-        var tbl = makeTable(response[i], tdivs[tdiv_idx]);
-        tbl.onclick = function(){ selectTable(curTbl, this); };
-       
-        if(tbl.dataset.capacity <= 0)
-        {
-            join_button.disabled = true;
-        }
-        //newDiv.appendChild(tbl);
-        //newDiv.appendChild(tdivs[tdiv_idx]);
-        tcounter++;
+ 
         if(tcounter >= tmax)
         {
-            newDiv.appendChild(tdivs[tdiv_idx]);
-            tdiv_idx++;
+            //newDiv.appendChild(tdivs[tdiv_idx]);
+            //tdiv_idx++;
             tcounter = 0;
-            tdivs[tdiv_idx] = document.createElement("div");
-            tdivs[tdiv_idx].setAttribute("class", "tdiv");
-            //tdiv.innerHTML = tdiv.innerHTML + '<br>';
+            rTbls_row = document.createElement("tr");
+            rTbls_bdy.appendChild(rTbls_row);
+            //tdivs[tdiv_idx].setAttribute("class", "tdiv");
         }
+        
+        var rTbls_td = document.createElement('td');
+        //var tbl = makeTable(response[i], tdivs[tdiv_idx]);
+        var tbl = makeTable(response[i], rTbls_td);
+        tbl.onclick = function(){ selectTable(curTbl, this); };
+        
+        rTbls_row.appendChild(rTbls_td);
+        tcounter++;
     }
-    if(tcounter !== 0)
-    {
-        newDiv.appendChild(tdivs[tdiv_idx]);
-    }
-}
-
-function selectTable(pTbl, cTbl)
-{
-    if(pTbl !== 'none')
-    {
-        pTbl.style.background = 'white';
-        //pTbl.setAttribute("background-color", "white");
-    }
-    
-    cTbl.style.background = 'yellow';
-    //cTbl.setAttribute("background-color", "yellow");
-    curTbl = cTbl;
+    newDiv.appendChild(rTbls);
+//    if(tcounter !== 0)
+//    {
+//        newDiv.appendChild(tdivs[tdiv_idx]);
+//    }   
 }
 
 function makeTable(responseObj, elementToAppendTo)
@@ -140,16 +240,38 @@ function makeTable(responseObj, elementToAppendTo)
             case "rideshare_ID":
                 tbl.setAttribute("data-rideshareID", responseObj[element]);
                 break;
-            case "ride_date":
+            case "dest_name":
                 var tr = document.createElement('tr');
                 var trh = document.createElement('td');
                 var td = document.createElement('td');
-                trh.innerHTML = "Date/Time:";
+                trh.innerHTML = "Destination:";
                 td.innerHTML = responseObj[element];
-                tbl.setAttribute("data-rideDate", responseObj[element]);
+                tbl.setAttribute("data-dest_name", responseObj[element]);  
                 tr.appendChild(trh);
                 tr.appendChild(td);
-                tby.appendChild(tr);
+                tby.appendChild(tr);                                          
+                break;  
+            case "ride_date":
+                var tr1 = document.createElement('tr');
+                var trh1 = document.createElement('td');
+                var td1 = document.createElement('td');
+                var date_time = responseObj[element].split(" ");              
+                trh1.innerHTML = "Date:";
+                td1.innerHTML = date_time[0];
+                tbl.setAttribute("data-rideDate", date_time[0]);
+                tr1.appendChild(trh1);
+                tr1.appendChild(td1);
+                tby.appendChild(tr1);
+                
+                var tr2 = document.createElement('tr');
+                var trh2 = document.createElement('td');
+                var td2 = document.createElement('td');
+                trh2.innerHTML = "Time:";
+                td2.innerHTML = date_time[1];
+                tbl.setAttribute("data-rideTime", date_time[1]);
+                tr2.appendChild(trh2);
+                tr2.appendChild(td2);
+                tby.appendChild(tr2);                
                 break;
             case "user_first_name":
                 var tr = document.createElement('tr');
@@ -178,14 +300,17 @@ function makeTable(responseObj, elementToAppendTo)
                 td.setAttribute("class", "d_cap");
                 tr.appendChild(trh);
                 tr.appendChild(td);
+                td.setAttribute("class", "r_cap")
                 tby.appendChild(tr);                                               
                 break;
             case "distance":
                 var tr = document.createElement('tr');
                 var trh = document.createElement('td');
                 var td = document.createElement('td');
+                var dist_temp = parseFloat(responseObj[element]).toFixed(2);
+                var dist_temp_str = dist_temp.toString();                
                 trh.innerHTML = "Distance to Pickup:";
-                td.innerHTML = responseObj[element];
+                td.innerHTML = dist_temp_str+' km';
                 tbl.setAttribute("data-distance", responseObj[element]);
                 tr.appendChild(trh);
                 tr.appendChild(td);
@@ -215,9 +340,50 @@ function makeTable(responseObj, elementToAppendTo)
     return tbl;
 }
 
-function updateCapacity(response, args)
+function selectTable(pTbl, cTbl)
 {
-    // intenionally left blank;
+    var jbutton = document.getElementById('join_button');
+    
+    if(jbutton.getAttribute('data-state') === 'off')
+    {
+        setButton(jbutton, 'setON');
+    }
+    
+    if(pTbl !== 'none')
+    {
+        pTbl.style.background = 'white';        
+    }
+    
+    cTbl.style.background = 'yellow';
+    curTbl = cTbl;
+}
+
+function setButton(button, state)
+{
+    if(state === 'setON')
+    {
+        button.setAttribute('data-state', 'on');
+        button.style.background = "lightgreen";
+        button.style.border = "1px solid black";
+        button.style.color = "black";
+        button.onmouseover = function(){ 
+            button.style.background = 'palegoldenrod'; 
+            button.style.cursor = 'pointer';};
+        button.onmouseout = function(){ 
+            button.style.background = 'lightgreen'; 
+            button.style.cursor = 'auto';};
+        button.onclick = function(){joinRideshare(button);};
+    }
+    else if(state === 'setOFF')
+    {
+        button.onmouseout = function(){;};
+        button.onmouseover = function(){;};
+        button.onclick = function(){;};        
+        button.setAttribute('data-state', 'off');
+        button.style.background = "lightgrey";
+        button.style.border = "1px solid darkgrey";
+        button.style.color = "darkgrey";
+    }
 }
 
 function connectDatabase(url, func, funcArgs)
@@ -284,13 +450,13 @@ function initialize()
 
 function lookupAddr() 
 {
-    var results = document.getElementById("msgDiv");
+    var results = document.getElementById("msgTblText");
     var address = document.getElementById("addr").value;
 }
 
 function getLocation() 
 {
-    var x = document.getElementById("msgDiv");
+    var x = document.getElementById("msgTblText");
     if (navigator.geolocation) 
     {
         navigator.geolocation.getCurrentPosition(showPosition);

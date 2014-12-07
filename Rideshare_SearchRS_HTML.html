@@ -9,9 +9,21 @@
     </head>
     <body>
         <div id="main_div">
+            <div id='logdiv'>
+                <table id="logTbl">
+                    <tbody>
+                        <tr>
+                            <td id="logTD1">                       
+                            </td>
+                            <td id="logTD2">                       
+                            </td>                       
+                        </tr>
+                    </tbody>
+                </table>
+            </div>          
             <div id="left_col">
-                <div>
-                    <a class ="top_links" href="Rideshare_AddAccount_HTML.html">Create Account</a>
+                <div id="top_link_div">
+                    <!--<a class ="top_links" href="Rideshare_AddAccount_HTML.html">Create Account</a>-->
                     <a class ="top_links" href="Rideshare_AddRS_HTML.html">Create Rideshare</a>
                 </div>                
                 <h1>Rideshare Search</h1>
@@ -20,7 +32,7 @@
                         <tbody>
                             <tr id="row1">
                                 <td class="search_table_cells">
-                                    <label for="destination">Destination of Rideshare: </label>                                                    
+                                    <label for="destination">destination of rideshare: </label>                                                    
                                 </td>
                                 <td class="search_table_cells">
                                     <input type="text" id="destination" name="destination" class="field-text" autofocus />  
@@ -28,7 +40,7 @@
                             </tr>
                             <tr class="search_table_rows">
                                 <td class="search_table_cells">
-                                    <label for="distance">Distance From Current Location (km): </label>                                                          
+                                    <label for="distance">distance from current location (km): </label>                                                          
                                 </td>
                                 <td class="search_table_cells"> 
                                     <input type="text" id="distance" name="distance" class="field-text" /> 
@@ -36,7 +48,7 @@
                             </tr>
                             <tr class="search_table_rows">
                                 <td class="search_table_cells">
-                                    <label for="lat">Current Location Latitude: </label>                                                             
+                                    <label for="lat">current location latitude: </label>                                                             
                                 </td>
                                 <td class="search_table_cells">
                                     <input id="lat" type="text" name="lat" class="field-text" value="47.693928" placeholder="47.693928" >
@@ -44,7 +56,7 @@
                             </tr>
                             <tr class="search_table_rows">
                                 <td class="search_table_cells">
-                                    <label for="lng">Current Location Longitude: </label>
+                                    <label for="lng">current location longitude: </label>
                                 </td>
                                 <td class="search_table_cells">
                                    <input id="lng" type="text" name="lng" class="field-text" value="-122.306676" placeholder="-122.306676">  
@@ -62,13 +74,13 @@
                             </tr>
                             <tr class="search_table_rows">
                                 <td colspan="2"> 
-                                    <input id="addr" class="wide_cells" type="text" value="Portland, OR" > 
+                                    <input id="addr" class="wide_cells" type="text" value="Enter address" > 
                                 </td>
                             </tr>
                         </tbody>                
                     </table>
                     <div>
-                        <table id="join_button" class="join_search_buttons" onclick="joinRideshare(document.getElementById('join_button_msg'))">
+                        <table id="join_button" class="join_search_buttons" data-state="off"><!-- onclick="joinRideshare(document.getElementById('join_button_msg'))">-->
                             <tbody>
                                 <tr>
                                     <td id="join_button_msg">Join rideshare</td>                                       
@@ -84,13 +96,22 @@
                         </table>                            
                     </div>
                 </div>
+                <br>
+                <div id="msgDiv">
+                    <table id="msgTbl">
+                        <tbody>
+                            <tr>
+                                <td id="msgTblText"></td>                                       
+                            </tr>                            
+                        </tbody>
+                    </table>                                       
+                </div>                
             </div>
             <div id="right_col">
-                <div id="msgDiv"></div>
+                <!--<div id="msgDiv"></div>-->
                 <div id="resultsDiv"></div>
                 <div id="map-canvas"></div>
-            </div>
-            <br>
+            </div>          
             <div data-role="fieldcontain">
 
                 <!--<button id="sb1" class="search_button" onclick="getLocation()">Set Current Location to Current GPS Location</button><br>            

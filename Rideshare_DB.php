@@ -23,9 +23,15 @@
     
     switch($act)
     {
+        case 'login':
+            $result = MakeLoginQuery($mysqli);
+            echo json_encode($result);          
+            mysqli_close($mysqli);                        
+            break;
         case 'addAccount':
             $result = MakeAddAccountQuery($mysqli);
-            echo json_encode(array( "result" => "TESTING" ));          
+            //echo json_encode(array( "result" => "TESTING" ));
+            echo json_encode($result); 
             mysqli_close($mysqli);             
             break;
         case 'addRideshare':
@@ -49,7 +55,35 @@
     
     //echo json_encode(process_result($result));
     //mysqli_close($mysqli);
- 
+    function MakeLoginQuery($mysqli)
+    {
+        $username = $_REQUEST['uname'];
+        $password = $_REQUEST['pw'];
+        
+        $q_str = "SELECT user_ID, username FROM `RideshareUser` WHERE"
+            ." username='".$username."' AND password='".$password."'";
+        
+        //echo $q_str;
+        $result = $mysqli->query($q_str);
+        
+        if($result == TRUE)
+        {
+            if ($result->num_rows >= 1)
+            {
+                $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+                return array( "result" => "OK", "UID" => $row['user_ID'], "uname" => $row['username'] );
+            }
+            else 
+            {
+                return array( "result" => "LOGIN_FAIL");
+            }
+        }
+        else
+        {
+            return array( "result" => "ERROR");
+        }
+    }
+    
     function MakeAddAccountQuery($mysqli)
     {
         $username = $_REQUEST['username'];
@@ -238,10 +272,44 @@
     
     function MakeRideshareJoinQuery($mysqli)
     {
-        $rideshare_ID = $_REQUEST['rideshare_ID'];    
-        $q_str = "UPDATE `Rideshare` SET Rideshare.capacity=(Rideshare.capacity - 1) WHERE Rideshare.capacity > 0 AND Rideshare.rideshare_ID = ".$rideshare_ID;
-        $result = $mysqli->query($q_str);
-        return $result;      
+        $rideshare_ID = $_REQUEST['rideshare_ID'];
+        $user_ID = $_REQUEST['user_ID'];
+        
+        $q_str = "SELECT RS_ID, USR_ID FROM `RideshareMember` WHERE RS_ID=".$rideshare_ID." AND USR_ID=".$user_ID;
+        $result1 = $mysqli->query($q_str);
+        if($result1 == TRUE)
+        {
+            if ($result1->num_rows >= 1)
+            {
+                return array( "result" => "IS_MEMBER" );
+            }
+        }
+        else
+        {
+            return array( "result" => "JOIN_ERROR" ); 
+        }
+        
+        $um_str = "INSERT INTO `RideshareMember` (`RS_ID`, `USR_ID`) "
+            ."VALUES ( (".$rideshare_ID."), '".$user_ID."')";
+        
+        $result2 = $mysqli->query($um_str);
+ 
+        if($result2 != TRUE)
+        {
+            return array( "result" => "JOIN_ERROR" ); 
+        }        
+        
+        $ur_str = "UPDATE `Rideshare` SET Rideshare.capacity=(Rideshare.capacity - 1) WHERE Rideshare.capacity > 0 AND Rideshare.rideshare_ID = ".$rideshare_ID;
+        $result3 = $mysqli->query($ur_str);
+        
+        if($result3 == TRUE)
+        {
+            return array( "result" => "JOIN_OK" ); 
+        }
+        else
+        {
+            return array( "result" => "JOIN_ERROR" ); 
+        }               
     }
     
     function process_result($result)
@@ -254,15 +322,27 @@
             case 'searchRideshare':  
                 $locationX = $_REQUEST['locationX']; // user location X GPS coord
                 $locationY = $_REQUEST['locationY']; // user locatoin Y GPS coord
+                
+                if($result == FALSE)
+                {
+                    $arr[] = array( "result" => "FAIL" );
+                    return $arr;
+                }
+                else if($result->num_rows == 0)
+                {
+                    $arr[] = array( "result" => "NONE" );
+                    return $arr;
+                }
+                
                 while($row = mysqli_fetch_array($result, MYSQLI_ASSOC))
                 {
                     $dist = getDistance($locationX, $locationY, $row['pickup_lat'], $row['pickup_lng']);
                     $dist = round($dist, 6, PHP_ROUND_HALF_UP);
-                    //unset($row['pickup_lat']);
-                    //unset($row['pickup_lng']);
                     $row['distance'] = $dist;
+                    $row['result'] = 'OK';
                     $jarr[] = $row;
                 }
+                
                 return $jarr; 
             case 'joinRideshare':
                 $jarr[] = $result;

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Grocery Rideshare - Home</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="Rideshare_Mainpage_JS.js"></script>
+        <link rel="stylesheet" href="Rideshare_SearchRS_CSS.css"/>
+    </head>
+    <body>
+        <div id='logdiv'>
+            <table id="logTbl">
+                <tbody>
+                    <tr>
+                        <td id="logTD1">                       
+                        </td>
+                        <td id="logTD2">                       
+                        </td>                       
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="left_col">
+            <div id="top_link_div">
+                <a class ="top_links" href="Rideshare_AddAccount_HTML.html">Create Account</a>
+            </div>
+            <h1>Rideshare Login</h1>
+            <div id="form_div">
+                <table id="log_input_tbl">
+                    <tbody>
+                        <tr>
+                            <td>
+                                Username:
+                            </td>
+                            <td>
+                                <input id="uname" type="text" class="login_text" value="Joedoe">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Password:
+                            </td>
+                            <td>
+                                <input id="pw" type="password" class="login_text" value="pw">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <button id="loginButton" onclick="login()">Login</button>
+                            </td>
+                        </tr>                   
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <div id="msgDiv">
+                <table id="msgTbl">
+                    <tbody>
+                        <tr>
+                            <td id="msgTblText"></td>                                       
+                        </tr>                            
+                    </tbody>
+                </table>                                       
+            </div>                
+        </div>
+    </body>
+</html>

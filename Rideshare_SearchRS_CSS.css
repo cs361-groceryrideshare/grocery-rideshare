@@ -1,137 +1,3 @@
-body
-{
-    margin-left: 5%;
-    margin-top: 2%;
-}
-
-td
-{
-    margin-bottom: 10px;
-}
-
-.field-text
-{
-    width: 100%;
-    text-align: center;
-    font-size: large;
-}
-
-.search_button
-{
-    margin-top: 10px;
-    font-size: large;
-}
-
-.wide_cells
-{
-    width: 100%;
-}
-
-.search_table_cells
-{
-    padding: 5px;
-    
-}
-
-.top_links
-{
-    margin-right: 25px;
-    font-size: large;
-}
-
-.resTbl:hover
-{
-    background: lightcyan !important;
-    cursor:pointer;
-    
-}
-
-.resTbl
-{
-    display: inline-table;
-    margin-right: 15px;
-    border: 1px solid black;
-    padding: 10px;
-    font-family: Arial, sans-serif;
-}
-
-#msgDiv, #resultsDiv
-{
-    clear:both;  
-}
-
-#left_col
-{
-    float:left;
-    width:45%;   
-}
-
-#form_div
-{
-    border: 1px solid black;
-}
-
-#right_col
-{
-    width:50%;
-    float:right;
-}
-
-.tdiv
-{
-    margin-bottom: 25px;
-    
-}
-
-#join_button
-{
-    text-align: center;
-    height: 100px;
-    margin-top: 25px;
-    margin-left: 10%;
-    margin-bottom: 25px;
-    background:lightgreen;
-    border: 1px solid black;
-    width: 35%;
-    font-family: Arial, sans-serif;
-    font-size: large;
-    display: inline-table;
-}
-
-#search_button
-{
-    text-align: center;
-    height: 100px;
-    margin-left: 10%;
-    margin-bottom: 5%;
-    background:lightgreen;
-    border: 1px solid black;
-    width: 35%;
-    font-family: Arial, sans-serif;
-    font-size: large;
-    display: inline-table;
-}
-
-#join_button:hover, #search_button:hover
-{
-    cursor:pointer;
-    background:palegoldenrod;
-}
-
-#search_table
-{
-    margin-left: 10%;
-    margin-top: 25px;
-
-    font-family: Arial, sans-serif;
-    font-size: large;
-}
-
-#submit_button
-{
-    margin-bottom: 10px;
-}
-
 #addr
 {
     font-family: Arial, sans-serif;
@@ -144,4 +10,219 @@ td
     margin-top: 10px;
 }
 
+body
+{
+    //margin-left: 5%;
+    margin-top: 1%;
+}
 
+.field-text
+{
+    width: 100%;
+    text-align: center;
+    font-size: large;
+}
+
+#form_div
+{
+    border: 1px solid black;
+}
+
+#join_button
+{
+    text-align: center;
+    height: 50px;
+    
+    margin-left: 10%;
+    margin-bottom: 25px;
+    width: 35%;
+    font-family: Arial, sans-serif;
+    font-size: large;
+    display: inline-table;
+    
+    background:lightgrey;
+    color:darkgrey;    
+    border: 1px solid darkgrey;    
+}
+
+#lat_lng_div
+{
+    display : none;
+}
+
+#left_col
+{
+    float:left;
+    width:45%;  
+    margin-left: 3%;
+    margin-right: 1%;
+}
+
+#log_input_tbl, #account_table
+{
+    width:80%;
+    margin-bottom: 5%;
+    font-family: Arial, sans-serif;
+    font-size: large;
+}
+
+#logdiv
+{
+    clear:both;
+    margin-bottom: 1%;
+    font-family: Arial, sans-serif;
+    font-size: large;
+    background:antiquewhite;
+}
+
+#loginButton, #makeAccountButton, #makeRSButton
+{
+    width: 100%;
+    font-family: Arial, sans-serif;
+    font-size: large;
+    margin-top: 10px;
+}
+
+#logTbl
+{
+    margin-left: 3%;
+    margin-right: 1%;
+}
+
+#logTD1
+{
+    width: 150px;
+}
+
+#logTD2
+{
+    width: 400px;
+}
+
+.login_text, .acct_make_text, .ride_make_text
+{
+    box-sizing: border-box;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    width: 100%;
+    font-family: Arial, sans-serif;    
+    text-align:center;
+}
+
+.login_text, .acct_make_text
+{
+    font-size: large;
+}
+
+#msgTbl
+{
+    border: 1px solid black;
+    font-family: Arial, sans-serif;
+    height: 75px;
+    text-align:center;
+    width: 100%;
+    font-size: large;
+}
+
+.resTbl
+{
+    display: inline-table;
+    margin-right: 15px;
+    border: 1px solid black;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+    width:-moz-available;
+    table-layout: fixed;
+    font-size: smaller;
+}
+
+.resTbl:hover
+{
+    background: lightcyan !important;
+    cursor:pointer;
+    
+}
+
+#right_col
+{
+    width:45%;
+    float:right;
+    margin-right: 3%;
+}
+
+#search_button
+{
+    text-align: center;
+    height: 50px;
+    margin-left: 10%;
+    margin-bottom: 5%;
+    background:lightgreen;
+    border: 1px solid black;
+    width: 35%;
+    font-family: Arial, sans-serif;
+    font-size: large;
+    display: inline-table;
+}
+
+#search_button:hover
+{
+    cursor:pointer;
+    background:palegoldenrod;
+}
+
+#search_table, #log_input_tbl, #account_table, #rs_make_table
+{
+    margin-left: 10%;
+    margin-top: 25px;
+
+    font-family: Arial, sans-serif;
+    font-size: large;
+}
+
+#search_table, #rs_make_table
+{
+    margin-bottom: 5%;
+    width:  80%;
+}
+
+#rs_make_table, #log_input_tbl, #account_table
+{
+    border-spacing: 10px;
+}
+
+.search_button
+{
+    margin-top: 10px;
+    font-size: large;
+}
+
+.search_table_cells
+{
+    padding: 5px;   
+}
+
+#submit_button
+{
+    margin-bottom: 10px;
+}
+
+td
+{
+    margin-bottom: 10px;
+}
+
+.tdiv
+{
+    margin-bottom: 25px; 
+}
+
+#top_link_div
+{
+    margin-bottom: 1%;
+    font-size: large;    
+}
+
+.wide_cells
+{
+    width: 100%;
+}

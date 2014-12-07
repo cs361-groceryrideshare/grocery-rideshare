@@ -3,6 +3,70 @@ var pickupY;
 var destX;
 var destY;
 
+window.onload = function(){ load_logname();};
+
+function load_logname()
+{  
+    var log_div = document.getElementById("logdiv");
+    var log_tbl = document.getElementById('logTbl');
+    if(log_tbl)
+    {
+        log_div.removeChild(log_tbl);
+    }
+    
+    log_tbl = document.createElement(('table'));
+    
+    var log_tbl_bdy = document.createElement('tbody');
+    var log_tbl_row = document.createElement('tr');
+    var log_tbl_td1 = document.createElement('td');   
+    var log_tbl_td2 = document.createElement('td');
+    
+    var log_link = document.createElement('a');
+    log_link.setAttribute('id', 'log_link');
+    
+    log_tbl.setAttribute('id', 'logTbl');
+    
+    log_tbl_td1.setAttribute('id', 'logTD1');
+    log_tbl_td2.setAttribute('id', 'logTD2');
+    
+    log_tbl_row.appendChild(log_tbl_td1);
+    log_tbl_row.appendChild(log_tbl_td2);
+    log_tbl_bdy.appendChild(log_tbl_row);
+    log_tbl.appendChild(log_tbl_bdy);
+    
+    if(sessionStorage.uname)
+    {
+        if(sessionStorage.uname === 'none')
+        {
+            log_link.setAttribute('href', 'Rideshare_Mainpage_HTML.html');
+            log_link.innerHTML = 'LOG IN';
+            log_tbl_td1.appendChild(log_link);
+        }
+        else
+        {
+            log_link.setAttribute('href', 'Rideshare_Mainpage_HTML.html');
+            log_link.onclick = function(){ logOut(); };
+            log_link.innerHTML = 'LOG OUT';
+            log_tbl_td1.appendChild(log_link);
+            log_tbl_td2.innerHTML = "Logged in as: "+sessionStorage.uname;
+        }
+    }
+    else
+    {       
+        log_link.setAttribute('href', 'Rideshare_Mainpage_HTML.html');
+        log_link.innerHTML = 'LOG IN';
+        log_tbl_td1.appendChild(log_link);
+    }      
+    log_div.appendChild(log_tbl);
+}
+
+function logOut()
+{
+    sessionStorage.uname = 'none';
+    sessionStorage.UID = -1;
+    return true;
+}
+
 function makeRideshare()
 {
     var ownerID = 2;
@@ -36,8 +100,8 @@ function makeRideshare()
 
 function postMakeFunc()
 {
-    var msg_div = document.getElementById("message_div");
-    msg_div.innerHTML = '<br>Rideshare created!';
+    var msg_div = document.getElementById("msgTblText");
+    msg_div.innerHTML = 'Rideshare created!';
     
     document.getElementById('pick_addr').value = "";
     document.getElementById('dest_addr').value = "";
